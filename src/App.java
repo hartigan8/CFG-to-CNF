@@ -7,30 +7,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-
 public class App {
     static List<String> alphabet = new ArrayList<>();
     static List<Expression> expressions = new LinkedList<>();
     
     private static void printExpressions() {
         for (Expression expression : expressions) {
-            Iterator<String> content =  expression.getContent().iterator();
-            System.out.print(expression.getName() + "-");
-            while(content.hasNext()){
-                System.out.print(content.next());
-                if(content.hasNext()) System.out.print("|");
-            }
-            System.out.println();
+            expression.printExpression();
         }
     }
-    
+
     private static void readFile() throws FileNotFoundException {
-        
         File cfg = new File("CFG.txt");
         Scanner scn = new Scanner(cfg);
 
-        
-        
         while(scn.hasNextLine()){
             String line = scn.nextLine();
             if(!line.isBlank()){
@@ -48,12 +38,24 @@ public class App {
                 
             }
         }
+
         scn.close();
+    }
+
+    private static void eliminateEmpty() {
+        for (Expression expression : expressions) {
+            List<String> content = expression.getContent();
+            for (String str : content) {
+                if(str.contains("€")){
+
+                }
+            }
+        }
+        printExpressions();
     }
 
     public static void main(String[] args) throws FileNotFoundException {
         readFile();
-
         printExpressions();
     }
 }

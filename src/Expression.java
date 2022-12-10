@@ -1,3 +1,4 @@
+import java.util.Iterator;
 import java.util.List;
 public class Expression {
     private String name; 
@@ -19,5 +20,13 @@ public class Expression {
         this.content = content;
     }
     
-
+    public void printExpression() {
+        Iterator<String> contentIterator =  content.iterator();
+        System.out.print(name + "-");
+        while(contentIterator.hasNext()){
+            System.out.print(contentIterator.next());
+            if(contentIterator.hasNext()) System.out.print("|");
+        }
+        System.out.println();
+    }
 }
