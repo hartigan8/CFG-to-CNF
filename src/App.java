@@ -10,10 +10,11 @@ public class App {
     public static void main(String[] args) throws Exception {
         
         File cfg = new File("CFG.txt");
-        List<String> alphabet = new ArrayList<>();
-        List<String> expressions = new LinkedList<>();
-        
         Scanner scn = new Scanner(cfg);
+
+        List<String> alphabet = new ArrayList<>();
+        List<Variable> expressions = new LinkedList<>();
+        
         while(scn.hasNextLine()){
             String line = scn.nextLine();
             if(!line.isBlank()){
@@ -22,13 +23,18 @@ public class App {
                     alphabet.addAll(Arrays.asList(alphabetArray));
                 }
                 else{
-                    
+                    String[] parsedExpression = line.split("-");
+                    String[] values = parsedExpression[1].split("\\|");
+                    List<String> valueList = Arrays.asList(values);
+                    Variable expression = new Variable(parsedExpression[0], valueList);
+                    expressions.add(expression);
                 }
                 
             }
-            
         }
-        expressions.toString();
 
+
+        
+        scn.close();
     }
 }
