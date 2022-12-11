@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 public class Expression {
@@ -5,7 +6,7 @@ public class Expression {
     private List<String> content;
     public Expression(String name, List<String> content) {
         this.name = name;
-        this.content = content;
+        this.content = new ArrayList<>(content);
     }
     public String getName() {
         return name;
@@ -29,4 +30,5 @@ public class Expression {
         }
         System.out.println();
     }
+
 }

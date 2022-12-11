@@ -2,7 +2,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -11,10 +10,12 @@ public class App {
     static List<String> alphabet = new ArrayList<>();
     static List<Expression> expressions = new LinkedList<>();
     
-    private static void printExpressions() {
-        for (Expression expression : expressions) {
-            expression.printExpression();
-        }
+    
+    public static void main(String[] args) throws FileNotFoundException {
+        readFile();
+        printExpressions();
+        System.out.println();
+        eliminateEmpty();
     }
 
     private static void readFile() throws FileNotFoundException {
@@ -42,20 +43,44 @@ public class App {
         scn.close();
     }
 
-    private static void eliminateEmpty() {
+    private static void printExpressions() {
         for (Expression expression : expressions) {
-            List<String> content = expression.getContent();
-            for (String str : content) {
-                if(str.contains("€")){
+            expression.printExpression();
+        }
+    }
 
+    private static void eliminateEmpty() {
+        System.out.println("Eliminate €");
+        List<String> nullableVars = new ArrayList<>();
+        for (Expression expression : expressions) {
+            List<String> contentToIterate = new ArrayList<>(expression.getContent());
+            List<String> actualContent = expression.getContent();
+            for (String str : contentToIterate) {
+                if(str.equals("€")){
+                    nullableVars.add(expression.getName());
+                    actualContent.remove("€");
                 }
             }
+
+        }
+        for (Expression expression : expressions) {
+            List<String> contentToIterate = new ArrayList<>(expression.getContent());
+            List<String> actualContent = expression.getContent();
+            for (String str : contentToIterate) {
+                String newStr = new String(str);
+                boolean replaced = false;
+                for(String nullVar : nullableVars){
+                    if(newStr.contains(nullVar)){
+                        newStr = newStr.replace(nullVar, "");
+                        replaced = true;
+                    }
+                }
+                if(replaced && newStr.length() > 0)
+                actualContent.add(newStr);
+            }
+            
         }
         printExpressions();
     }
-
-    public static void main(String[] args) throws FileNotFoundException {
-        readFile();
-        printExpressions();
-    }
+    
 }
