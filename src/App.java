@@ -14,7 +14,6 @@ public class App {
     public static void main(String[] args) throws FileNotFoundException {
         readFile();
         printExpressions();
-        System.out.println();
         eliminateEmpty();
     }
 
@@ -47,6 +46,7 @@ public class App {
         for (Expression expression : expressions) {
             expression.printExpression();
         }
+        System.out.println();
     }
 
     private static void eliminateEmpty() {
