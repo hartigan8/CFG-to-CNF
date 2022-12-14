@@ -1,12 +1,9 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
-import grammar.Expression;
 import grammar.Grammar;
 
 public class App {
@@ -18,6 +15,7 @@ public class App {
         readFile();
         System.out.println();
         grammar.eliminateEmpty();
+        grammar.eliminateUnit();
     }
 
     private static void readFile() throws FileNotFoundException {

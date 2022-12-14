@@ -77,7 +77,13 @@ public class Expression {
 
     protected void deleteEmptyChar() {
         for (int i = 0; i < content.size(); i++) {
-            if(content.get(i).contains(Grammar.EMPTY)) content.remove(content.get(i));
+            String string = content.get(i);
+            if(string.length() == 1 && string.equals(Grammar.EMPTY)) {
+                content.remove(string);
+            }
         }
     }
+
+
+    
 }

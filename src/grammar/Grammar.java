@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Grammar {
@@ -72,6 +73,7 @@ public class Grammar {
             eliminateEmpty();
         }
         printGrammar();
+        System.out.println();
     }
 
     private boolean elimateEmptyDirectedBy(Expression expression) {
@@ -83,7 +85,27 @@ public class Grammar {
             if(consistEmpty) gotEmpty = true;
         }
         expression.deleteEmptyChar();
-
         return gotEmpty;
+    }
+
+    public void eliminateUnit() {
+        Iterator<Expression> expressions = grammarMap.values().iterator();
+        List<BufferExpression> buffers = new LinkedList<>();
+        while(expressions.hasNext()){
+            Expression expression = expressions.next();
+            List<String> contents = expression.getContent();
+            int size = contents.size();
+            for (int i = 0; i < size; i++) {
+                String string = contents.get(i);
+                if(string.length() == 1 && !terminal.contains(string)){
+                    buffers.add(new BufferExpression(expression.getName(), grammarMap.get(string).getContent()));
+                }
+            }
+        }
+        for (BufferExpression buffer : buffers) {
+            grammarMap.get(buffer.getTarget()).addAllStrings(buffer.getContent());
+        }
+        printGrammar();
+        System.out.println();
     }
 }
