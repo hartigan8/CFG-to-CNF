@@ -6,15 +6,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+import grammar.Expression;
+import grammar.Grammar;
+
 public class App {
-    static List<String> alphabet = new ArrayList<>();
-    static List<Expression> expressions = new LinkedList<>();
-    
+
+    static Grammar grammar;
     
     public static void main(String[] args) throws FileNotFoundException {
+        grammar = new Grammar();
         readFile();
-        printExpressions();
-        eliminateEmpty();
+        System.out.println();
+        grammar.eliminateEmpty();
     }
 
     private static void readFile() throws FileNotFoundException {
@@ -25,62 +28,20 @@ public class App {
             String line = scn.nextLine();
             if(!line.isBlank()){
                 if(line.charAt(0) == 'E'){
-                    String[] alphabetArray = line.substring(2).split(",");
-                    alphabet.addAll(Arrays.asList(alphabetArray));
+                    String[] terminal = line.substring(2).split(",");
+                    grammar.initTerminal(terminal);
                 }
                 else{
                     String[] parsedExpression = line.split("-");
+                    String name = parsedExpression[0];
                     String[] values = parsedExpression[1].split("\\|");
                     List<String> valueList = Arrays.asList(values);
-                    Expression expression = new Expression(parsedExpression[0], valueList);
-                    expressions.add(expression);
+                    grammar.addExpression(name, valueList);
                 }
                 
             }
         }
-
         scn.close();
+        grammar.printGrammar();
     }
-
-    private static void printExpressions() {
-        for (Expression expression : expressions) {
-            expression.printExpression();
-        }
-        System.out.println();
-    }
-
-    private static void eliminateEmpty() {
-        System.out.println("Eliminate €");
-        List<String> nullableVars = new ArrayList<>();
-        for (Expression expression : expressions) {
-            List<String> contentToIterate = new ArrayList<>(expression.getContent());
-            List<String> actualContent = expression.getContent();
-            for (String str : contentToIterate) {
-                if(str.equals("€")){
-                    nullableVars.add(expression.getName());
-                    actualContent.remove("€");
-                }
-            }
-
-        }
-        for (Expression expression : expressions) {
-            List<String> contentToIterate = new ArrayList<>(expression.getContent());
-            List<String> actualContent = expression.getContent();
-            for (String str : contentToIterate) {
-                String newStr = new String(str);
-                boolean replaced = false;
-                for(String nullVar : nullableVars){
-                    if(newStr.contains(nullVar)){
-                        newStr = newStr.replace(nullVar, "");
-                        replaced = true;
-                    }
-                }
-                if(replaced && newStr.length() > 0)
-                actualContent.add(newStr);
-            }
-            
-        }
-        printExpressions();
-    }
-    
 }
