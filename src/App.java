@@ -16,6 +16,8 @@ public class App {
         grammar.ensureStartVariableNotAtRight();
         grammar.eliminateEmpty();
         grammar.eliminateUnit();
+        grammar.eliminateTerminals();
+        grammar.breakStrings();
     }
 
     private static void readFileAndCreateGrammar() throws FileNotFoundException {

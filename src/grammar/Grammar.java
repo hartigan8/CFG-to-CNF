@@ -114,26 +114,35 @@ public class Grammar {
 
     public void eliminateUnit() {
         Iterator<Expression> expressions = grammarMap.values().iterator();
-        List<BufferExpression> buffers = new LinkedList<>();
         while(expressions.hasNext()){
             Expression expression = expressions.next();
-            List<String> contents = expression.getContent();
-            //int size = contents.size();
-            for (int i = 0; i < contents.size(); i++) {
-                String string = contents.get(i);
-                if(string.length() == 1 && !terminal.contains(string)){
-                    buffers.add(new BufferExpression(expression.getName(), grammarMap.get(string).getContent()));
-                    contents.remove(string);
-                    i--;
+            while(true){
+                List<String> buffer = expression.unitProductions(terminal);
+                expression.removeAllStrings(buffer);
+                if(buffer.size() == 0){
+                    break;
+                }
+                else{
+                    for (String string : buffer) {
+                        List<String> contentsToAdd = grammarMap.get(string).getContent();
+                        expression.addAllStrings(contentsToAdd);
+                    }
                 }
             }
-        }
-        for (BufferExpression buffer : buffers) {
-            grammarMap.get(buffer.getTarget()).addAllStrings(buffer.getContent());
+
         }
         printGrammar();
         System.out.println();
     }
 
-    
+    public void eliminateTerminals() {
+        
+        printGrammar();
+        System.out.println();
+    }
+
+    public void breakStrings() {
+        printGrammar();
+        System.out.println();
+    }
 }

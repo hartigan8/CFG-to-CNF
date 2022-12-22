@@ -1,4 +1,5 @@
 package grammar;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,5 +84,19 @@ public class Expression {
             }
         }
         return false;
+    }
+    protected List<String> unitProductions(HashSet<String> terminals){
+        List<String> buffer = new LinkedList<>();
+        for (String string : content) {
+            if(string.length() == 1 && !terminals.contains(string)){
+                buffer.add(string);
+            }
+        }
+        return buffer;
+    }
+    public void removeAllStrings(List<String> buffer) {
+        for (String string : buffer) {
+            content.remove(string);
+        }
     }
 }
