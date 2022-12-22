@@ -74,4 +74,14 @@ public class Expression {
         }
     }
     
+    protected boolean consistStartVariable() {
+        for (String string : content) {
+            for (int i = 0; i < string.length(); i++) {
+                if(string.charAt(i) == 'S'){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

@@ -9,10 +9,12 @@ public class Grammar {
     private HashMap<String, Expression> grammarMap;
     private HashSet<String> terminal;
     public static final String EMPTY = "€";
+    private int charCounter;
 
     public Grammar() {
         this.grammarMap = new HashMap<>();
         this.terminal = new HashSet<>();
+        charCounter = 65;
     }
     
     public void initTerminal(String[] terminalContent) {
@@ -22,12 +24,9 @@ public class Grammar {
     }
 
     public void addExpression(String name, List<String> content) {
-
-
         Expression expression = new Expression(name);
         expression.addAllStrings(content);
         grammarMap.put(name, expression);
-        
     }
 
     
@@ -38,7 +37,34 @@ public class Grammar {
         }
     }
 
-    
+    public void ensureStartVariableNotAtRight() {
+        Iterator<Expression> expressions = grammarMap.values().iterator();
+        boolean b = false;
+        while(expressions.hasNext() && !b){
+            Expression expression = expressions.next();
+            if(expression.consistStartVariable()){
+                
+                while(true){
+                    
+                    String expName = String.valueOf((char) charCounter);
+                    if(!grammarMap.containsKey(expName)){
+                        b = true;
+                    }
+                    else charCounter++;
+                    if(b){
+                        Expression newStart = new Expression(expName);
+                        newStart.addString("S");
+                        grammarMap.put(expName, newStart);
+                        break;
+                    }
+                }
+            }
+        }
+        if(b){
+            printGrammar();
+            System.out.println();
+        }
+    }
 
     public void eliminateEmpty() {
 
@@ -82,6 +108,7 @@ public class Grammar {
         }
         else{
             printGrammar();
+            System.out.println();
         }
     }
 
@@ -91,11 +118,13 @@ public class Grammar {
         while(expressions.hasNext()){
             Expression expression = expressions.next();
             List<String> contents = expression.getContent();
-            int size = contents.size();
-            for (int i = 0; i < size; i++) {
+            //int size = contents.size();
+            for (int i = 0; i < contents.size(); i++) {
                 String string = contents.get(i);
                 if(string.length() == 1 && !terminal.contains(string)){
                     buffers.add(new BufferExpression(expression.getName(), grammarMap.get(string).getContent()));
+                    contents.remove(string);
+                    i--;
                 }
             }
         }
@@ -105,4 +134,6 @@ public class Grammar {
         printGrammar();
         System.out.println();
     }
+
+    
 }

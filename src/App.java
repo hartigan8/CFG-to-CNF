@@ -12,13 +12,13 @@ public class App {
     
     public static void main(String[] args) throws FileNotFoundException {
         grammar = new Grammar();
-        readFile();
+        readFileAndCreateGrammar();
+        grammar.ensureStartVariableNotAtRight();
         grammar.eliminateEmpty();
-        System.out.println();
         grammar.eliminateUnit();
     }
 
-    private static void readFile() throws FileNotFoundException {
+    private static void readFileAndCreateGrammar() throws FileNotFoundException {
         File cfg = new File("CFG.txt");
         Scanner scn = new Scanner(cfg);
 
