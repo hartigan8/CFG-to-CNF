@@ -6,13 +6,10 @@ public class Expression {
 
     private String name; 
     private List<String> content;
-    private List<String> directedBy;
-
 
     protected Expression(String name) {
         this.name = name;
         this.content = new LinkedList<>();
-        this.directedBy = new LinkedList<>();
 
     }
     protected String getName() {
@@ -33,10 +30,6 @@ public class Expression {
         content.addAll(strings);
     }
 
-    protected void addDiretctedBy(String s) {
-        if(!directedBy.contains(s))
-        directedBy.add(s);
-    }
     
     protected void printExpression() {
         Iterator<String> contentIterator =  content.iterator();
@@ -54,9 +47,6 @@ public class Expression {
         return false;
     }
     
-    protected List<String> getDirectedBy() {
-        return directedBy;
-    }
 
     protected boolean deleteEmptyVariable(String expressionName) {
         int size = content.size();
@@ -83,7 +73,5 @@ public class Expression {
             }
         }
     }
-
-
     
 }

@@ -1,57 +1,35 @@
 package grammar;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Grammar {
     private HashMap<String, Expression> grammarMap;
-    private List<String> terminal;
+    private HashSet<String> terminal;
     public static final String EMPTY = "€";
 
     public Grammar() {
         this.grammarMap = new HashMap<>();
-        this.terminal = new ArrayList<>();
+        this.terminal = new HashSet<>();
     }
     
     public void initTerminal(String[] terminalContent) {
-        terminal = Arrays.asList(terminalContent);
+        for (String string : terminalContent) {
+            terminal.add(string);
+        }
     }
 
     public void addExpression(String name, List<String> content) {
 
 
-        for (String string : content) {
-            String[] variables = string.split("");
-            for (String letter : variables) {
-                if(!terminal.contains(letter) && !letter.equals(EMPTY)){
-                    addToDirectedByOfAExpression(name, letter);
-                }
-            }
-        }
-
-        if(grammarMap.containsKey(name)){
-            Expression expression = grammarMap.get(name);
-            expression.setContents(content);
-
-        }
-        else{
-            Expression expression = new Expression(name);
-            expression.addAllStrings(content);
-
-            grammarMap.put(name, expression);
-        }
+        Expression expression = new Expression(name);
+        expression.addAllStrings(content);
+        grammarMap.put(name, expression);
         
     }
 
-    private void addToDirectedByOfAExpression(String directedBy, String directsTo) {
-        if(!grammarMap.containsKey(directsTo)){
-            grammarMap.put(directsTo, new Expression(directsTo));
-        }
-        grammarMap.get(directsTo).addDiretctedBy(directedBy);
-    }
     
     public void printGrammar() {
         Iterator<Expression> expressions = grammarMap.values().iterator();
@@ -60,32 +38,51 @@ public class Grammar {
         }
     }
 
+    
+
     public void eliminateEmpty() {
+
         Iterator<Expression> expressions = grammarMap.values().iterator();
-        boolean newPossibleEmpty = false;
+        HashSet<String> nulls = new HashSet<>();
+        boolean nullAppeared = false;
+
         while(expressions.hasNext()){
             Expression expression = expressions.next();
             if(expression.isContainsEmpty()){
-                newPossibleEmpty = elimateEmptyDirectedBy(expression);
+                nulls.add(expression.getName());
             }
         }
-        if(newPossibleEmpty){
+
+        expressions = grammarMap.values().iterator();
+        while(expressions.hasNext()){
+            Expression expression = expressions.next();
+            List<String> content = expression.getContent();
+
+            for (int i = 0; i < content.size(); i++) {
+                String string = content.get(i);
+                for (int j = 0; j < string.length(); j++) {
+                    if(nulls.contains(String.valueOf(string.charAt(j)))){
+                        String newString = string.substring(0,j) + string.substring(j + 1);
+                        if(!content.contains(newString)){
+                            if(newString.length() == 0 && !nulls.contains(expression.getName())) {
+                                nullAppeared = true;
+                                content.add(EMPTY);
+                            }
+                            else {
+                                content.add(newString);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        nulls.stream().forEach(nullExpression -> grammarMap.get(nullExpression).getContent().remove(EMPTY));
+        if(nullAppeared){
             eliminateEmpty();
         }
-        printGrammar();
-        System.out.println();
-    }
-
-    private boolean elimateEmptyDirectedBy(Expression expression) {
-        boolean gotEmpty = false;
-        List<String> directedBy = expression.getDirectedBy();
-        for (String string : directedBy) {
-            Expression directedByExpression = grammarMap.get(string);
-            boolean consistEmpty = directedByExpression.deleteEmptyVariable(expression.getName());
-            if(consistEmpty) gotEmpty = true;
+        else{
+            printGrammar();
         }
-        expression.deleteEmptyChar();
-        return gotEmpty;
     }
 
     public void eliminateUnit() {

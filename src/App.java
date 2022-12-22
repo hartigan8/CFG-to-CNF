@@ -8,13 +8,13 @@ import grammar.Grammar;
 
 public class App {
 
-    static Grammar grammar;
+    private static Grammar grammar;
     
     public static void main(String[] args) throws FileNotFoundException {
         grammar = new Grammar();
         readFile();
-        System.out.println();
         grammar.eliminateEmpty();
+        System.out.println();
         grammar.eliminateUnit();
     }
 
@@ -41,5 +41,6 @@ public class App {
         }
         scn.close();
         grammar.printGrammar();
+        System.out.println();
     }
 }
