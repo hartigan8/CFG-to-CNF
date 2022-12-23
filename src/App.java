@@ -17,7 +17,7 @@ public class App {
         grammar.eliminateEmpty();
         grammar.eliminateUnit();
         grammar.eliminateTerminals();
-        grammar.breakStrings();
+        //grammar.breakStrings();
     }
 
     private static void readFileAndCreateGrammar() throws FileNotFoundException {

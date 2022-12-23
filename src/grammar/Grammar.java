@@ -39,24 +39,27 @@ public class Grammar {
 
     public void ensureStartVariableNotAtRight() {
         Iterator<Expression> expressions = grammarMap.values().iterator();
+        
+        // is start variable at the right hand side flag
         boolean b = false;
         while(expressions.hasNext() && !b){
+            // traverse expressions and find if one of them contains 'S'
             Expression expression = expressions.next();
             if(expression.consistStartVariable()){
                 
+                // if an expression contains 'S' then find a name to give
+                // to find a name use ascii and count then add to grammarMap
                 while(true){
-                    
                     String expName = String.valueOf((char) charCounter);
+
                     if(!grammarMap.containsKey(expName)){
                         b = true;
-                    }
-                    else charCounter++;
-                    if(b){
                         Expression newStart = new Expression(expName);
                         newStart.addString("S");
                         grammarMap.put(expName, newStart);
                         break;
                     }
+                    else charCounter++;
                 }
             }
         }
@@ -70,8 +73,12 @@ public class Grammar {
 
         Iterator<Expression> expressions = grammarMap.values().iterator();
         HashSet<String> nulls = new HashSet<>();
+
+        // after replacing a string if there is no char left in string
+        // then this function must call itself
         boolean nullAppeared = false;
 
+        // detemine expressions which contains empty
         while(expressions.hasNext()){
             Expression expression = expressions.next();
             if(expression.isContainsEmpty()){
@@ -79,6 +86,7 @@ public class Grammar {
             }
         }
 
+        // traverse expressions and replace the variables which contains empty with ""
         expressions = grammarMap.values().iterator();
         while(expressions.hasNext()){
             Expression expression = expressions.next();
@@ -102,7 +110,10 @@ public class Grammar {
                 }
             }
         }
+
+        // deleting null chars from expressions
         nulls.stream().forEach(nullExpression -> grammarMap.get(nullExpression).getContent().remove(EMPTY));
+
         if(nullAppeared){
             eliminateEmpty();
         }
@@ -136,11 +147,39 @@ public class Grammar {
     }
 
     public void eliminateTerminals() {
-        
+
+        // find variable names for terminals and create a HashMap to link names with terminals
+        // from terminal get variable name this make easier replacing terminals with names
+        HashMap<String, String> terminalMap = new HashMap<>();
+        for (String t : terminal) {
+            while(true){
+                String expressionName = String.valueOf((char) charCounter);
+                if(grammarMap.containsKey(expressionName)){
+                    charCounter++;
+                }
+                else{
+                    terminalMap.put(t, expressionName);
+                    Expression exp = new Expression(expressionName);
+                    exp.addString(t);
+                    grammarMap.put(expressionName, exp);
+                    break;
+                }
+            }
+        }
+        // replace terminals with variable
+        Iterator<Expression> expressions = grammarMap.values().iterator();
+        while(expressions.hasNext()){
+            Expression exp = expressions.next();
+            if(!terminalMap.containsValue(exp.getName())){
+                exp.replaceChars(terminalMap);
+            }
+            
+        }
         printGrammar();
         System.out.println();
     }
 
+    // TODO break strings longer than 2
     public void breakStrings() {
         printGrammar();
         System.out.println();

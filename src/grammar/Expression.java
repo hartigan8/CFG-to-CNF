@@ -1,4 +1,5 @@
 package grammar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -94,9 +95,26 @@ public class Expression {
         }
         return buffer;
     }
-    public void removeAllStrings(List<String> buffer) {
+    protected void removeAllStrings(List<String> buffer) {
         for (String string : buffer) {
             content.remove(string);
+        }
+    }
+
+    protected void replaceChars(HashMap<String, String> replacements) {
+        for (int i = 0; i < content.size(); i++) {
+            Iterator<String> rplcIt = replacements.keySet().iterator();
+            while (rplcIt.hasNext()) {
+                String target = rplcIt.next();
+                String replacement = replacements.get(target);
+                
+                //content.get(i).replace(target, replacement);
+
+                String newStr = content.get(i).replace(target, replacement);
+                content.remove(i);
+                content.add(i, newStr);
+            }
+            
         }
     }
 }
