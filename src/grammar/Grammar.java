@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Grammar {
+
     private HashMap<String, Expression> grammarMap;
     private HashSet<String> terminal;
     public static final String EMPTY = "€";
@@ -49,21 +50,15 @@ public class Grammar {
                 
                 // if an expression contains 'S' then find a name to give
                 // to find a name use ascii and count then add to grammarMap
-                while(true){
-                    String expName = String.valueOf((char) charCounter);
-
-                    if(!grammarMap.containsKey(expName)){
-                        b = true;
-                        Expression newStart = new Expression(expName);
-                        newStart.addString("S");
-                        grammarMap.put(expName, newStart);
-                        break;
-                    }
-                    else charCounter++;
-                }
+                String expName = newName();
+                b = true;
+                Expression newStart = new Expression(expName);
+                newStart.addString("S");
+                grammarMap.put(expName, newStart);
             }
         }
         if(b){
+            System.out.println("Ensure start variable not at the right hand side");
             printGrammar();
             System.out.println();
         }
@@ -118,6 +113,7 @@ public class Grammar {
             eliminateEmpty();
         }
         else{
+            System.out.println("Eliminate €  ");
             printGrammar();
             System.out.println();
         }
@@ -142,6 +138,7 @@ public class Grammar {
             }
 
         }
+        System.out.println("Eliminate unit production");
         printGrammar();
         System.out.println();
     }
@@ -152,19 +149,12 @@ public class Grammar {
         // from terminal get variable name this make easier replacing terminals with names
         HashMap<String, String> terminalMap = new HashMap<>();
         for (String t : terminal) {
-            while(true){
-                String expressionName = String.valueOf((char) charCounter);
-                if(grammarMap.containsKey(expressionName)){
-                    charCounter++;
-                }
-                else{
-                    terminalMap.put(t, expressionName);
-                    Expression exp = new Expression(expressionName);
-                    exp.addString(t);
-                    grammarMap.put(expressionName, exp);
-                    break;
-                }
-            }
+            
+            String expressionName = newName();
+            terminalMap.put(t, expressionName);
+            Expression exp = new Expression(expressionName);
+            exp.addString(t);
+            grammarMap.put(expressionName, exp);
         }
         // replace terminals with variable
         Iterator<Expression> expressions = grammarMap.values().iterator();
@@ -175,13 +165,83 @@ public class Grammar {
             }
             
         }
+        System.out.println("Eliminate terminals ");
         printGrammar();
         System.out.println();
     }
 
-    // TODO break strings longer than 2
+    // TODO comment
     public void breakStrings() {
+
+        HashMap<String, String> varMap;
+        Iterator<Expression> expIt = grammarMap.values().iterator();
+        List<String> moreThanTwoList;
+        while(true){
+
+            varMap = new HashMap<>();
+            moreThanTwoList = new LinkedList<>();
+
+            // getting substrings of strings that longer than 2
+            while (expIt.hasNext()) {
+                Expression exp = expIt.next();
+                moreThanTwoList.addAll(exp.moreThanTwoList());
+                
+            }
+
+            // if there is no string such that then exit
+            if(moreThanTwoList.size() == 0){
+                break;
+            }
+
+            // put them into a map to use function in expression class
+            for (String string : moreThanTwoList) {
+                if(!varMap.containsKey(string)){
+                    String newName = newName();
+                    Expression exp = new Expression(newName);
+                    exp.addString(string);
+                    grammarMap.put(newName, exp);
+                    varMap.put(string, newName);
+                }
+            }
+
+            // replace substrings with variables
+            List<String> invalidList = new LinkedList<>();
+            Iterator<Expression> expressions = grammarMap.values().iterator();
+            while(expressions.hasNext()){
+                Expression exp = expressions.next();
+                if(!varMap.containsValue(exp.getName())){
+                    boolean invalid = exp.replaceChars(varMap);
+                    if(invalid){
+                        invalidList.add(exp.getName());
+                    }
+                }
+                    
+            }
+            
+            // delete unused substrings
+            for (String string : invalidList) {
+                grammarMap.remove(string);
+            }
+
+            
+        }
+        
+
+        System.out.println("Break variable strings longer than 2 ");
         printGrammar();
         System.out.println();
+    }
+
+    // to get new name for a variable
+    private String newName() {
+        while(true){
+            String expressionName = String.valueOf((char) charCounter);
+            if(grammarMap.containsKey(expressionName)){
+                charCounter++;
+            }
+            else{
+                return expressionName;
+            }
+        }
     }
 }

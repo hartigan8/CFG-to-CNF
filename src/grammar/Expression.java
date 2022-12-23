@@ -1,4 +1,5 @@
 package grammar;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -11,7 +12,7 @@ public class Expression {
 
     protected Expression(String name) {
         this.name = name;
-        this.content = new LinkedList<>();
+        this.content = new ArrayList<>();
 
     }
     protected String getName() {
@@ -101,9 +102,11 @@ public class Expression {
         }
     }
 
-    protected void replaceChars(HashMap<String, String> replacements) {
+    protected boolean replaceChars(HashMap<String, String> replacements) {
+        boolean invalid = true;
         for (int i = 0; i < content.size(); i++) {
             Iterator<String> rplcIt = replacements.keySet().iterator();
+            
             while (rplcIt.hasNext()) {
                 String target = rplcIt.next();
                 String replacement = replacements.get(target);
@@ -111,10 +114,23 @@ public class Expression {
                 //content.get(i).replace(target, replacement);
 
                 String newStr = content.get(i).replace(target, replacement);
+                if(!newStr.equals(content.get(i))) invalid = false;
                 content.remove(i);
                 content.add(i, newStr);
             }
-            
         }
+        return invalid;
     }
+
+    protected List<String> moreThanTwoList() {
+        List<String> moreThanTwoList = new LinkedList<>();
+        for (String string : content) {
+            if(string.length() > 2){
+                String subS = string.substring(0, 2);
+                moreThanTwoList.add(subS);
+            }
+        }
+        return moreThanTwoList;
+    }
+
 }

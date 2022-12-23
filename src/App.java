@@ -17,7 +17,7 @@ public class App {
         grammar.eliminateEmpty();
         grammar.eliminateUnit();
         grammar.eliminateTerminals();
-        //grammar.breakStrings();
+        grammar.breakStrings();
     }
 
     private static void readFileAndCreateGrammar() throws FileNotFoundException {
@@ -42,6 +42,7 @@ public class App {
             }
         }
         scn.close();
+        System.out.println("CFG Form");
         grammar.printGrammar();
         System.out.println();
     }
