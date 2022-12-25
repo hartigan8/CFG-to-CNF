@@ -92,7 +92,7 @@ public class Grammar {
                 for (int j = 0; j < string.length(); j++) {
                     if(nulls.contains(String.valueOf(string.charAt(j)))){
                         String newString = string.substring(0,j) + string.substring(j + 1);
-                        if(!content.contains(newString)){
+                        if(!content.contains(newString) && !expression.getName().equals("S")){
                             if(newString.length() == 0 && !nulls.contains(expression.getName())) {
                                 nullAppeared = true;
                                 content.add(EMPTY);
@@ -170,16 +170,17 @@ public class Grammar {
         System.out.println();
     }
 
-    // TODO comment
     public void breakStrings() {
 
-        HashMap<String, String> varMap;
+        
+        HashMap<String, String> varMap; //value, name
         Iterator<Expression> expIt = grammarMap.values().iterator();
         List<String> moreThanTwoList;
         while(true){
 
             varMap = new HashMap<>();
             moreThanTwoList = new LinkedList<>();
+            List<String> invalidList = new LinkedList<>();
 
             // getting substrings of strings that longer than 2
             while (expIt.hasNext()) {
@@ -201,19 +202,36 @@ public class Grammar {
                     exp.addString(string);
                     grammarMap.put(newName, exp);
                     varMap.put(string, newName);
+                    // mark all of them unused and if one of them used then remove from the list
+                    invalidList.add(newName);
                 }
             }
 
             // replace substrings with variables
-            List<String> invalidList = new LinkedList<>();
+            
             Iterator<Expression> expressions = grammarMap.values().iterator();
+
             while(expressions.hasNext()){
                 Expression exp = expressions.next();
                 if(!varMap.containsValue(exp.getName())){
-                    boolean invalid = exp.replaceChars(varMap);
-                    if(invalid){
-                        invalidList.add(exp.getName());
+                    
+                    Iterator<String> varMapIterator = varMap.keySet().iterator();
+                    while (varMapIterator.hasNext()) {
+
+                        // create single unit map to see that if that var ever used
+                        String singleKey = varMapIterator.next();
+                        String singleValue = varMap.get(singleKey);
+                        HashMap<String, String> singleVar = new HashMap<>();
+
+                        singleVar.put(singleKey, singleValue);
+                        boolean invalid = exp.replaceChars(singleVar);
+                        // if used even once them remove invalid list
+                        if(!invalid && invalidList.contains(singleValue)){
+                            invalidList.remove(singleValue);
+                        }
                     }
+                    
+                    
                 }
                     
             }

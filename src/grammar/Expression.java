@@ -26,11 +26,16 @@ public class Expression {
     }
 
     protected void addString(String s){
+        if(!content.contains(s))
         content.add(s);
     }
 
     protected void addAllStrings(List<String> strings) {
-        content.addAll(strings);
+        for (String string : strings) {
+            if(!content.contains(string)){
+                content.add(string);
+            }
+        }
     }
 
     
@@ -110,13 +115,13 @@ public class Expression {
             while (rplcIt.hasNext()) {
                 String target = rplcIt.next();
                 String replacement = replacements.get(target);
-                
-                //content.get(i).replace(target, replacement);
 
                 String newStr = content.get(i).replace(target, replacement);
-                if(!newStr.equals(content.get(i))) invalid = false;
-                content.remove(i);
-                content.add(i, newStr);
+                if(!newStr.equals(content.get(i))){
+                    invalid = false;
+                    content.remove(i);
+                    content.add(i, newStr);
+                } 
             }
         }
         return invalid;
