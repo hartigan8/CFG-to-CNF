@@ -26,13 +26,13 @@ public class Expression {
     }
 
     protected void addString(String s){
-        if(!content.contains(s))
+        if(!content.contains(s) && !s.equals(name))
         content.add(s);
     }
 
     protected void addAllStrings(List<String> strings) {
         for (String string : strings) {
-            if(!content.contains(string)){
+            if(!content.contains(string) && !string.equals(name)){
                 content.add(string);
             }
         }
@@ -119,9 +119,10 @@ public class Expression {
                 String newStr = content.get(i).replace(target, replacement);
                 if(!newStr.equals(content.get(i))){
                     invalid = false;
-                    content.remove(i);
-                    content.add(i, newStr);
+                    
                 } 
+                content.remove(i);
+                content.add(i, newStr);
             }
         }
         return invalid;

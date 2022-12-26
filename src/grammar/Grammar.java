@@ -50,7 +50,8 @@ public class Grammar {
                 
                 // if an expression contains 'S' then find a name to give
                 // to find a name use ascii and count then add to grammarMap
-                String expName = newName();
+                //String expName = newName();
+                String expName = "S0";
                 b = true;
                 Expression newStart = new Expression(expName);
                 newStart.addString("S");
@@ -92,13 +93,13 @@ public class Grammar {
                 for (int j = 0; j < string.length(); j++) {
                     if(nulls.contains(String.valueOf(string.charAt(j)))){
                         String newString = string.substring(0,j) + string.substring(j + 1);
-                        if(!content.contains(newString) && !expression.getName().equals("S")){
-                            if(newString.length() == 0 && !nulls.contains(expression.getName())) {
+                        if(!content.contains(newString)){
+                            if(newString.length() == 0 && !nulls.contains(expression.getName())  && !expression.getName().equals("S")) {
                                 nullAppeared = true;
-                                content.add(EMPTY);
+                                expression.addString(EMPTY);
                             }
                             else {
-                                content.add(newString);
+                                expression.addString(newString);
                             }
                         }
                     }
@@ -230,7 +231,6 @@ public class Grammar {
                             invalidList.remove(singleValue);
                         }
                     }
-                    
                     
                 }
                     
