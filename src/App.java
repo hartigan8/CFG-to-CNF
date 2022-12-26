@@ -27,6 +27,7 @@ public class App {
         while(scn.hasNextLine()){
             String line = scn.nextLine();
             if(!line.isBlank()){
+                line = line.trim();
                 if(line.charAt(0) == 'E'){
                     String[] terminal = line.substring(2).split(",");
                     grammar.initTerminal(terminal);
